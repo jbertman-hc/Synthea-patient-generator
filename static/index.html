@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synthea Patient Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .select-wrapper {
+            position: relative;
+        }
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #6B7280;
+        }
+        #output-log {
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .output-line {
+            padding: 2px 4px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen py-8">
+        <div class="max-w-4xl mx-auto px-4">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Synthea Patient Generator</h1>
+            
+            <form id="generatorForm" class="bg-white shadow rounded-lg p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Number of Patients -->
+                    <div>
+                        <label for="num_patients" class="block text-sm font-medium text-gray-700">Number of Patients</label>
+                        <input type="number" id="num_patients" name="num_patients" min="1" value="5" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Years of History -->
+                    <div>
+                        <label for="years_of_history" class="block text-sm font-medium text-gray-700">Years of History</label>
+                        <input type="number" id="years_of_history" name="years_of_history" min="0" value="3" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <!-- State Selection -->
+                <div>
+                    <label for="state" class="block text-sm font-medium text-gray-700">State</label>
+                    <div class="select-wrapper">
+                        <select id="state" name="state" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 appearance-none bg-white">
+                            <option value="Alabama">Alabama</option>
+                            <option value="Alaska">Alaska</option>
+                            <option value="Arizona">Arizona</option>
+                            <option value="Arkansas">Arkansas</option>
+                            <option value="California">California</option>
+                            <option value="Colorado">Colorado</option>
+                            <option value="Connecticut">Connecticut</option>
+                            <option value="Delaware">Delaware</option>
+                            <option value="Florida">Florida</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Hawaii">Hawaii</option>
+                            <option value="Idaho">Idaho</option>
+                            <option value="Illinois">Illinois</option>
+                            <option value="Indiana">Indiana</option>
+                            <option value="Iowa">Iowa</option>
+                            <option value="Kansas">Kansas</option>
+                            <option value="Kentucky">Kentucky</option>
+                            <option value="Louisiana">Louisiana</option>
+                            <option value="Maine">Maine</option>
+                            <option value="Maryland">Maryland</option>
+                            <option value="Massachusetts" selected>Massachusetts</option>
+                            <option value="Michigan">Michigan</option>
+                            <option value="Minnesota">Minnesota</option>
+                            <option value="Mississippi">Mississippi</option>
+                            <option value="Missouri">Missouri</option>
+                            <option value="Montana">Montana</option>
+                            <option value="Nebraska">Nebraska</option>
+                            <option value="Nevada">Nevada</option>
+                            <option value="New Hampshire">New Hampshire</option>
+                            <option value="New Jersey">New Jersey</option>
+                            <option value="New Mexico">New Mexico</option>
+                            <option value="New York">New York</option>
+                            <option value="North Carolina">North Carolina</option>
+                            <option value="North Dakota">North Dakota</option>
+                            <option value="Ohio">Ohio</option>
+                            <option value="Oklahoma">Oklahoma</option>
+                            <option value="Oregon">Oregon</option>
+                            <option value="Pennsylvania">Pennsylvania</option>
+                            <option value="Rhode Island">Rhode Island</option>
+                            <option value="South Carolina">South Carolina</option>
+                            <option value="South Dakota">South Dakota</option>
+                            <option value="Tennessee">Tennessee</option>
+                            <option value="Texas">Texas</option>
+                            <option value="Utah">Utah</option>
+                            <option value="Vermont">Vermont</option>
+                            <option value="Virginia">Virginia</option>
+                            <option value="Washington">Washington</option>
+                            <option value="West Virginia">West Virginia</option>
+                            <option value="Wisconsin">Wisconsin</option>
+                            <option value="Wyoming">Wyoming</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- No Numbers in Names Option -->
+                <div class="flex items-center">
+                    <input type="checkbox" id="no_numbers" name="no_numbers" checked
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="no_numbers" class="ml-2 block text-sm text-gray-700">
+                        Don't append numbers to names
+                    </label>
+                </div>
+
+                <!-- Output Formats -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Output Formats</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="CCDA"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">C-CDA</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="CDATEXT"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">CDA Text</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="CPCDS"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">CPCDS</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="CSV"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">CSV</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="FHIR_DSTU2"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">FHIR DSTU2</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="FHIR_R4" checked
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">FHIR R4</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="FHIR_R4PLUS"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">FHIR R4+ (US Core)</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="FHIR_STU3"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">FHIR STU3</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="HL7"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">HL7 v2</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="HTML"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">HTML</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="output_formats" value="TEXT"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">Text</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Generate Patients
+                </button>
+            </form>
+
+            <!-- Output Log -->
+            <div class="mt-8 bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Generation Progress</h2>
+                <div id="output-log" class="bg-gray-50 border border-gray-200 rounded p-4">
+                    <div class="text-gray-500">Waiting to start generation...</div>
+                </div>
+            </div>
+
+            <!-- Generated Files -->
+            <div id="generated-files" class="mt-8 bg-white shadow rounded-lg p-6 hidden">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Generated Files</h2>
+                <div id="files-list" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('generatorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const submitButton = form.querySelector('button[type="submit"]');
+            const outputLog = document.getElementById('output-log');
+            const generatedFiles = document.getElementById('generated-files');
+            const filesList = document.getElementById('files-list');
+            
+            // Clear previous output
+            outputLog.innerHTML = '';
+            filesList.innerHTML = '';
+            generatedFiles.classList.add('hidden');
+            
+            // Disable submit button
+            submitButton.disabled = true;
+            submitButton.textContent = 'Generating...';
+
+            try {
+                // Set up SSE for real-time updates
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const {value, done} = await reader.read();
+                    if (done) break;
+
+                    const text = decoder.decode(value);
+                    const lines = text.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const content = line.slice(6);
+                            if (content.trim()) {
+                                const div = document.createElement('div');
+                                div.className = 'output-line';
+                                div.textContent = content;
+                                outputLog.appendChild(div);
+                                outputLog.scrollTop = outputLog.scrollHeight;
+                            }
+                        }
+                    }
+                }
+
+                // Show success message
+                const div = document.createElement('div');
+                div.className = 'output-line text-green-600';
+                div.textContent = 'Generation completed successfully!';
+                outputLog.appendChild(div);
+
+            } catch (error) {
+                console.error('Error:', error);
+                const div = document.createElement('div');
+                div.className = 'output-line text-red-600';
+                div.textContent = `Error: ${error.message}`;
+                outputLog.appendChild(div);
+            } finally {
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Generate Patients';
+            }
+        });
+    </script>
+</body>
+</html>

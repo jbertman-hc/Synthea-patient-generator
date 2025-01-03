@@ -46,10 +46,12 @@ Thumbs.db
 
 # Synthea output files
 output/
+/output/
 *.json
 *.xml
 *.csv
 *.html
+!static/*.html
 *.txt
 !requirements.txt
 *.hl7
