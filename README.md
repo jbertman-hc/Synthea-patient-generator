@@ -1,4 +1,4 @@
-# Synthea Patient Generator Web Interface
+# Synthea Patient Generator with Web Interface
 
 A containerized web application for generating synthetic patient data using Synthea. This application provides a user-friendly interface to Synthea's synthetic patient generation capabilities, making it easy to create realistic healthcare data in various formats.
 
