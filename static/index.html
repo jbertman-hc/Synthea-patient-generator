@@ -4,60 +4,481 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synthea Patient Generator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .select-wrapper {
-            position: relative;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .select-wrapper::after {
-            content: '▼';
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            color: #6B7280;
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f0f4f8;
+            color: #1a202c;
+            line-height: 1.5;
+            padding: 2rem;
         }
-        #output-log {
-            height: 200px;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #4a5568;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input[type="number"]:focus {
+            border-color: #4299e1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+
+        .checkbox-group {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            margin-right: 0.75rem;
+            border-radius: 4px;
+            border: 2px solid #4a5568;
+            cursor: pointer;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -1px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .output-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .output-section.hidden {
+            display: none;
+        }
+        
+        .output-log {
+            height: 300px;
             overflow-y: auto;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
             font-family: monospace;
             white-space: pre-wrap;
         }
+        
         .output-line {
-            padding: 2px 4px;
-            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        
+        .output-line.error {
+            color: #dc3545;
+        }
+        
+        .loading {
+            display: inline-block;
+            margin-left: 8px;
+        }
+        
+        .loading.hidden {
+            display: none;
+        }
+        
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .generate-section {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .output-dir-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .button.primary {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+        }
+
+        .button.primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -1px rgba(79, 70, 229, 0.3);
+        }
+
+        .button.primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .format-group {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .format-group h3 {
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .format-group h3 .icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.75rem;
+            color: #4f46e5;
+        }
+
+        .format-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .format-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .format-item input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            margin-right: 0.75rem;
+            border: 2px solid #cbd5e0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .format-item input[type="checkbox"]:checked {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+
+        .format-item label {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .format-description {
+            margin-left: 2rem;
+            font-size: 0.875rem;
+            color: #718096;
+        }
+
+        .icon {
+            width: 1.2rem;
+            height: 1.2rem;
+            color: #4a5568;
+        }
+
+        .dir-select {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .dir-select input[type="text"] {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #f8fafc;
+            cursor: default;
+        }
+
+        .btn-secondary {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background-color: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2d3748;
+        }
+
+        .btn-secondary .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .output-formats-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .output-formats {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .format-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .format-label {
+            flex: 0 0 200px;
+            display: flex;
+            align-items: center;
+        }
+
+        .format-description {
+            color: #666;
+            font-size: 0.9rem;
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .command-display {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .command-display h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        .command-text {
+            margin: 0;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: monospace;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .button-disabled {
+            opacity: 0.6;
+            cursor: not-allowed !important;
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen py-8">
-        <div class="max-w-4xl mx-auto px-4">
-            <h1 class="text-3xl font-bold text-gray-900 mb-8">Synthea Patient Generator</h1>
-            
-            <form id="generatorForm" class="bg-white shadow rounded-lg p-6 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Number of Patients -->
-                    <div>
-                        <label for="num_patients" class="block text-sm font-medium text-gray-700">Number of Patients</label>
-                        <input type="number" id="num_patients" name="num_patients" min="1" value="5" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    </div>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Synthea Patient Generator</h1>
+            <p>Generate synthetic patient data in multiple formats</p>
+        </div>
 
-                    <!-- Years of History -->
-                    <div>
-                        <label for="years_of_history" class="block text-sm font-medium text-gray-700">Years of History</label>
-                        <input type="number" id="years_of_history" name="years_of_history" min="0" value="3" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    </div>
-                </div>
-
-                <!-- State Selection -->
+        <form id="generatorForm" class="card">
+            <div class="form-grid">
                 <div>
-                    <label for="state" class="block text-sm font-medium text-gray-700">State</label>
-                    <div class="select-wrapper">
-                        <select id="state" name="state" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 appearance-none bg-white">
+                    <div class="form-group">
+                        <label for="num_patients">Number of Patients:</label>
+                        <input type="number" id="num_patients" name="num_patients" min="1" value="1" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State:</label>
+                        <select id="state" name="state" class="form-control">
                             <option value="Alabama">Alabama</option>
                             <option value="Alaska">Alaska</option>
                             <option value="Arizona">Arizona</option>
@@ -78,7 +499,7 @@
                             <option value="Louisiana">Louisiana</option>
                             <option value="Maine">Maine</option>
                             <option value="Maryland">Maryland</option>
-                            <option value="Massachusetts" selected>Massachusetts</option>
+                            <option value="Massachusetts">Massachusetts</option>
                             <option value="Michigan">Michigan</option>
                             <option value="Minnesota">Minnesota</option>
                             <option value="Mississippi">Mississippi</option>
@@ -110,169 +531,317 @@
                             <option value="Wyoming">Wyoming</option>
                         </select>
                     </div>
-                </div>
-
-                <!-- No Numbers in Names Option -->
-                <div class="flex items-center">
-                    <input type="checkbox" id="no_numbers" name="no_numbers" checked
-                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                    <label for="no_numbers" class="ml-2 block text-sm text-gray-700">
-                        Don't append numbers to names
-                    </label>
-                </div>
-
-                <!-- Output Formats -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Output Formats</label>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="CCDA"
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">C-CDA</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="CDATEXT"
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">CDA Text</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="CPCDS"
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">CPCDS</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="CSV"
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">CSV</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="FHIR_DSTU2"
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">FHIR DSTU2</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="FHIR_R4" checked
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">FHIR R4</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="FHIR_R4PLUS"
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">FHIR R4+ (US Core)</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="FHIR_STU3"
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">FHIR STU3</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="HL7"
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">HL7 v2</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="HTML"
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">HTML</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="output_formats" value="TEXT"
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">Text</span>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="no_numbers" name="no_numbers">
+                            Remove numbers from names
                         </label>
                     </div>
                 </div>
+            </div>
 
-                <button type="submit" 
-                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                    Generate Patients
-                </button>
-            </form>
+            <div class="form-group output-formats-container">
+                <label>Output Formats</label>
+                <div class="output-formats">
+                    <div class="format-item">
+                        <input type="checkbox" id="check-all" name="check_all">
+                        <label for="check-all"><strong>Check All</strong></label>
+                    </div>
+                    <div class="format-description">Select or deselect all output formats</div>
 
-            <!-- Output Log -->
-            <div class="mt-8 bg-white shadow rounded-lg p-6">
-                <h2 class="text-lg font-medium text-gray-900 mb-4">Generation Progress</h2>
-                <div id="output-log" class="bg-gray-50 border border-gray-200 rounded p-4">
-                    <div class="text-gray-500">Waiting to start generation...</div>
+                    <div class="format-group">
+                        <h3 class="mb-3">
+                            FHIR Formats
+                        </h3>
+                        <div class="format-row">
+                            <div class="format-label">
+                                <input type="checkbox" id="fhir_r4" name="output_formats" value="FHIR_R4">
+                                <label for="fhir_r4">FHIR R4</label>
+                            </div>
+                            <div class="format-description">Latest FHIR R4 standard (v4.0.1) - Recommended for new implementations</div>
+                        </div>
+
+                        <div class="format-row">
+                            <div class="format-label">
+                                <input type="checkbox" id="fhir_stu3" name="output_formats" value="FHIR_STU3">
+                                <label for="fhir_stu3">FHIR STU3</label>
+                            </div>
+                            <div class="format-description">FHIR STU3 (v3.0.1) - For compatibility with older systems</div>
+                        </div>
+
+                        <div class="format-row">
+                            <div class="format-label">
+                                <input type="checkbox" id="fhir_dstu2" name="output_formats" value="FHIR_DSTU2">
+                                <label for="fhir_dstu2">FHIR DSTU2</label>
+                            </div>
+                            <div class="format-description">FHIR DSTU2 (v1.0.2) - Legacy support for older implementations</div>
+                        </div>
+
+                        <h3 class="mb-3 mt-4">
+                            Other Healthcare Formats
+                        </h3>
+                        <div class="format-row">
+                            <div class="format-label">
+                                <input type="checkbox" id="ccda" name="output_formats" value="CCDA">
+                                <label for="ccda">C-CDA</label>
+                            </div>
+                            <div class="format-description">Clinical Document Architecture format for clinical document exchange</div>
+                        </div>
+
+                        <div class="format-row">
+                            <div class="format-label">
+                                <input type="checkbox" id="hl7" name="output_formats" value="HL7">
+                                <label for="hl7">HL7 v2.4</label>
+                            </div>
+                            <div class="format-description">Health Level Seven v2.4 messages for healthcare system integration</div>
+                        </div>
+
+                        <h3 class="mb-3 mt-4">
+                            Data Analysis Formats
+                        </h3>
+                        <div class="format-row">
+                            <div class="format-label">
+                                <input type="checkbox" id="csv" name="output_formats" value="CSV">
+                                <label for="csv">CSV</label>
+                            </div>
+                            <div class="format-description">Comma-separated values for data analysis and import into other tools</div>
+                        </div>
+
+                        <div class="format-row">
+                            <div class="format-label">
+                                <input type="checkbox" id="json" name="output_formats" value="JSON">
+                                <label for="json">JSON</label>
+                            </div>
+                            <div class="format-description">JavaScript Object Notation format for easy parsing and analysis</div>
+                        </div>
+
+                        <div class="format-row">
+                            <div class="format-label">
+                                <input type="checkbox" id="cpcds" name="output_formats" value="CPCDS">
+                                <label for="cpcds">CPCDS</label>
+                            </div>
+                            <div class="format-description">Common Payer Consumer Data Set for insurance and payment data</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Generated Files -->
-            <div id="generated-files" class="mt-8 bg-white shadow rounded-lg p-6 hidden">
-                <h2 class="text-lg font-medium text-gray-900 mb-4">Generated Files</h2>
-                <div id="files-list" class="space-y-2"></div>
+            <div class="generate-section">
+                <div class="button-group mt-4">
+                    <button type="button" id="generateButton" class="button button-primary">
+                        Generate Patients
+                        <div class="loading hidden">
+                            <div class="spinner"></div>
+                        </div>
+                    </button>
+                </div>
             </div>
-        </div>
+
+            <div id="output-section" class="output-section hidden">
+                <div class="output-header">
+                    <h3>Generation Progress</h3>
+                    <div id="progress-info"></div>
+                </div>
+                <div id="output-content"></div>
+            </div>
+        </form>
     </div>
 
     <script>
-        document.getElementById('generatorForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const form = e.target;
-            const formData = new FormData(form);
-            const submitButton = form.querySelector('button[type="submit"]');
-            const outputLog = document.getElementById('output-log');
-            const generatedFiles = document.getElementById('generated-files');
-            const filesList = document.getElementById('files-list');
-            
-            // Clear previous output
-            outputLog.innerHTML = '';
-            filesList.innerHTML = '';
-            generatedFiles.classList.add('hidden');
-            
-            // Disable submit button
-            submitButton.disabled = true;
-            submitButton.textContent = 'Generating...';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default state to Massachusetts
+            document.getElementById('state').value = 'Massachusetts';
 
-            try {
-                // Set up SSE for real-time updates
-                const response = await fetch('/generate', {
-                    method: 'POST',
-                    body: formData
+            // Function to format file size
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            }
+
+            // Function to format timestamp
+            function formatTimestamp(timestamp) {
+                return new Date(timestamp * 1000).toLocaleString();
+            }
+
+            // Function to update FHIR files list
+            async function updateFhirFiles() {
+                try {
+                    const response = await fetch('/fhir');
+                    if (!response.ok) return;
+                    
+                    const files = await response.json();
+                    const fhirFiles = document.getElementById('fhir-files');
+                    const fhirList = document.getElementById('fhir-list');
+                    
+                    if (files.length === 0) {
+                        fhirFiles.classList.add('hidden');
+                        return;
+                    }
+                    
+                    fhirList.innerHTML = '';
+                    files.forEach(file => {
+                        const item = document.createElement('div');
+                        item.className = 'fhir-item';
+                        item.innerHTML = `
+                            <div class="fhir-item-info">
+                                <div class="fhir-item-name">${file.name}</div>
+                                <div class="fhir-item-meta">
+                                    ${formatFileSize(file.size)} • ${formatTimestamp(file.modified)}
+                                </div>
+                            </div>
+                            <a href="/fhir/${file.name}" download class="btn btn-secondary">Download</a>
+                        `;
+                        fhirList.appendChild(item);
+                    });
+                    
+                    fhirFiles.classList.remove('hidden');
+                } catch (error) {
+                    console.error('Error fetching FHIR files:', error);
+                }
+            }
+
+            // Function to download all FHIR files
+            function downloadAllFhir() {
+                window.location.href = '/download/fhir';
+            }
+
+            const checkAllBox = document.getElementById('check-all');
+            const formatCheckboxes = document.querySelectorAll('input[name="output_formats"]');
+
+            // Add check all functionality
+            checkAllBox.addEventListener('change', function() {
+                formatCheckboxes.forEach(checkbox => {
+                    checkbox.checked = checkAllBox.checked;
+                });
+            });
+
+            // Update check all box when individual boxes change
+            formatCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const allChecked = Array.from(formatCheckboxes).every(box => box.checked);
+                    const noneChecked = Array.from(formatCheckboxes).every(box => !box.checked);
+                    checkAllBox.checked = allChecked;
+                    checkAllBox.indeterminate = !allChecked && !noneChecked;
+                });
+            });
+
+            // Handle generate button click
+            document.getElementById('generateButton').addEventListener('click', async function(e) {
+                e.preventDefault(); // Prevent form submission
+
+                const button = this;
+                const loadingSpinner = button.querySelector('.loading');
+                const outputSection = document.getElementById('output-section');
+                const outputLog = document.getElementById('output-log');
+                const commandDisplay = document.getElementById('command-display');
+                const commandText = document.getElementById('command-text');
+
+                // Get selected formats
+                const selectedFormats = [];
+                document.querySelectorAll('input[name="output_formats"]:checked').forEach(checkbox => {
+                    selectedFormats.push(checkbox.value);
                 });
 
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
+                if (selectedFormats.length === 0) {
+                    alert('Please select at least one output format');
+                    return;
+                }
 
-                while (true) {
-                    const {value, done} = await reader.read();
-                    if (done) break;
+                // Show output section and clear previous output
+                outputSection.classList.remove('hidden');
+                outputLog.innerHTML = '';
+                commandText.textContent = '';
 
-                    const text = decoder.decode(value);
-                    const lines = text.split('\n');
+                // Disable button and show loading state
+                button.disabled = true;
+                loadingSpinner.classList.remove('hidden');
 
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            const content = line.slice(6);
-                            if (content.trim()) {
-                                const div = document.createElement('div');
-                                div.className = 'output-line';
-                                div.textContent = content;
-                                outputLog.appendChild(div);
-                                outputLog.scrollTop = outputLog.scrollHeight;
+                try {
+                    const requestData = {
+                        num_patients: parseInt(document.getElementById('num_patients').value) || 1,
+                        state: document.getElementById('state').value,
+                        output_formats: selectedFormats,
+                        no_numbers: document.getElementById('no_numbers').checked
+                    };
+
+                    const response = await fetch('/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    // Handle streaming response
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        const text = decoder.decode(value);
+                        const lines = text.split('\n');
+                        
+                        for (const line of lines) {
+                            if (line.trim() && line.startsWith('data: ')) {
+                                const message = line.slice(6);
+                                if (message.startsWith('download_url: ')) {
+                                    const downloadUrl = message.slice(13);
+                                    const downloadLink = document.createElement('a');
+                                    downloadLink.href = downloadUrl;
+                                    downloadLink.className = 'button primary';
+                                    downloadLink.style.display = 'inline-block';
+                                    downloadLink.style.marginTop = '10px';
+                                    downloadLink.textContent = 'Download Generated Files';
+                                    outputLog.appendChild(downloadLink);
+                                } else if (message.startsWith('Generation complete')) {
+                                    // Update FHIR files list after generation is complete
+                                    await updateFhirFiles();
+                                } else if (message.startsWith('data: command:')) {
+                                    const commandStr = message.replace('data: command:', '').trim();
+                                    // Update both the command display and add to log
+                                    commandText.textContent = commandStr;
+                                    commandDisplay.style.display = 'block';
+                                    
+                                    const outputLine = document.createElement('div');
+                                    outputLine.className = 'output-line';
+                                    outputLine.textContent = message;
+                                    outputLog.appendChild(outputLine);
+                                    outputLog.scrollTop = outputLog.scrollHeight;
+                                } else {
+                                    const outputLine = document.createElement('div');
+                                    outputLine.className = 'output-line';
+                                    outputLine.textContent = message;
+                                    outputLog.appendChild(outputLine);
+                                    outputLog.scrollTop = outputLog.scrollHeight;
+                                }
                             }
                         }
                     }
+                } catch (error) {
+                    console.error('Error:', error);
+                    const errorLine = document.createElement('div');
+                    errorLine.className = 'output-line error';
+                    errorLine.textContent = `Error: ${error.message}`;
+                    outputLog.appendChild(errorLine);
+                } finally {
+                    // Re-enable button and hide loading state
+                    button.disabled = false;
+                    loadingSpinner.classList.add('hidden');
                 }
+            });
 
-                // Show success message
-                const div = document.createElement('div');
-                div.className = 'output-line text-green-600';
-                div.textContent = 'Generation completed successfully!';
-                outputLog.appendChild(div);
-
-            } catch (error) {
-                console.error('Error:', error);
-                const div = document.createElement('div');
-                div.className = 'output-line text-red-600';
-                div.textContent = `Error: ${error.message}`;
-                outputLog.appendChild(div);
-            } finally {
-                // Re-enable submit button
-                submitButton.disabled = false;
-                submitButton.textContent = 'Generate Patients';
-            }
+            const downloadAllBtn = document.getElementById('downloadAll');
+            downloadAllBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Prevent any action since it's disabled
+            });
         });
     </script>
 </body>
