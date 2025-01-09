@@ -1,106 +1,73 @@
-# Synthea Patient Generator Web UI
+# Synthea Patient Generator Web Interface
 
-A modern web interface for generating synthetic patient data using the Synthea patient generator.
+A web-based interface for generating synthetic patient data using the Synthea patient generator.
 
 ## Features
 
-- **Multiple Output Formats**:
-  - FHIR (R4, STU3, DSTU2)
+- Simple web interface for generating synthetic patient data
+- Select number of patients and target state
+- Choose from multiple output formats:
+  - FHIR R4 (Latest standard)
+  - FHIR STU3
+  - FHIR DSTU2
+  - CCDA
   - HL7 v2.4
-  - C-CDA
   - CSV
   - JSON
   - CPCDS
+- Option to remove numbers from patient names
+- Real-time progress updates during generation
+- Download all generated files as a ZIP archive
+- Non-persistent storage (files are cleared between sessions)
 
-- **User-Friendly Interface**:
-  - Simple form for patient generation parameters
-  - Real-time progress updates
-  - Organized output format selection
-  - Clear descriptions for each format
-
-- **Flexible Configuration**:
-  - Configurable number of patients
-  - State selection for demographics
-  - Customizable output formats
-  - Dynamic properties management
-
-## Getting Started
-
-### Prerequisites
+## Requirements
 
 - Docker
 - Docker Compose
 
-### Installation
+## Quick Start
 
 1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/Synthea-patient-generator.git
-cd Synthea-patient-generator
-```
+   ```bash
+   git clone https://github.com/yourusername/Synthea-patient-generator.git
+   cd Synthea-patient-generator
+   ```
 
-2. Build and run with Docker Compose:
-```bash
-docker compose up --build -d
-```
+2. Build and start the container:
+   ```bash
+   docker compose up
+   ```
 
-3. Access the web interface:
-```
-http://localhost:8000
-```
+3. Access the web interface at:
+   ```
+   http://localhost:8000
+   ```
 
 ## Usage
 
-1. Select your desired output formats from the available options
-2. Enter the number of patients to generate
-3. Choose a US state for demographic data
-4. Click "Generate Patients"
-5. Monitor the progress in real-time
-6. Access generated files in the output directory
+1. Select the number of patients to generate
+2. Choose a state (defaults to Rhode Island)
+3. Select desired output formats
+4. Optionally check "No numbers in names" to remove numbers from generated names
+5. Click "Generate" to start the process
+6. Monitor progress in real-time
+7. Download generated files using the "Download All Files" button
+8. Files are automatically cleared when the container is restarted
 
-## Output Structure
+## Notes
 
-Generated files are organized in the `output` directory with subdirectories for each format:
-- `/output/fhir/` - FHIR resources (R4, STU3, or DSTU2)
-- `/output/hl7/` - HL7 v2.4 messages
-- `/output/ccda/` - C-CDA documents
-- `/output/csv/` - CSV files
-- `/output/json/` - JSON files
-- `/output/cpcds/` - CPCDS format files
+- Generated files are stored in a temporary filesystem and do not persist between container restarts
+- The interface automatically refreshes the file list after generation
+- Error messages and generation progress are displayed in real-time
+- The download button is only enabled when files are available
 
-## Technical Details
+## Development
 
-- Built with FastAPI and Python
-- Uses the official Synthea JAR for patient generation
-- Real-time progress updates via Server-Sent Events (SSE)
-- Docker containerization for easy deployment
-- Dynamic properties file management for Synthea configuration
-
-## About Synthea
-
-Synthea is an open-source synthetic patient generator that models the medical history of synthetic patients. The resulting data is free from cost, privacy, and security restrictions, making it ideal for:
-- Healthcare software development
-- Medical education
-- EHR system testing
-- Health IT standards development
-
-For more information about Synthea, visit [SyntheticMass](https://syntheticmass.mitre.org/).
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+To modify the application:
+1. Edit files in the `app` directory for backend changes
+2. Edit files in the `static` directory for frontend changes
+3. The application will automatically reload when changes are detected
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
-
-## Acknowledgments
-
-- [Synthea Project](https://github.com/synthetichealth/synthea) for the synthetic patient generator
-- MITRE Corporation for developing and maintaining Synthea
-
-## Coming Soon
-
-- Bulk download functionality for FHIR files
-- Additional format customization options
-- Enhanced error handling and validation
+[Insert your license information here]

@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 
 services:
   web:
@@ -8,12 +8,10 @@ services:
     volumes:
       - ./app:/app/app
       - ./static:/app/static
-      - synthea_output:/app/output
+      - type: tmpfs
+        target: /app/output
     environment:
       - PYTHONPATH=/app
       - JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-    restart: unless-stopped
-
-volumes:
-  synthea_output:
-    name: synthea_output
+      - CLASSPATH=/app/synthea-with-dependencies.jar:/app/slf4j-api.jar:/app/slf4j-simple.jar
+    command: uvicorn app.main:app --host 0.0.0.0 --reload
