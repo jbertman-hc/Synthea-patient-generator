@@ -162,57 +162,74 @@
         }
 
         .output-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 4px;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        
-        .output-section.hidden {
-            display: none;
+
+        .output-header {
+            margin-bottom: 1.5rem;
         }
-        
-        .output-log {
-            height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-            background: #fff;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            font-family: monospace;
+
+        .output-header h3 {
+            color: #1e293b;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .command-display {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .command-display h4 {
+            margin: 0 0 0.5rem 0;
+            color: #475569;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .command-text {
+            margin: 0;
+            padding: 0.75rem;
+            background-color: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
             white-space: pre-wrap;
+            word-break: break-all;
+            color: #334155;
         }
-        
-        .output-line {
-            margin-bottom: 4px;
-            line-height: 1.4;
+
+        .output-log {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-height: 400px;
+            overflow-y: auto;
         }
-        
-        .output-line.error {
-            color: #dc3545;
-        }
-        
-        .loading {
-            display: inline-block;
-            margin-left: 8px;
-        }
-        
-        .loading.hidden {
-            display: none;
-        }
-        
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .progress-info {
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background-color: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 6px;
+            color: #0369a1;
+            font-size: 0.9rem;
         }
 
         .generate-section {
@@ -378,44 +395,97 @@
 
         .format-row {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 1rem;
-            gap: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .format-row:hover {
+            background-color: #f8fafc;
         }
 
         .format-label {
-            flex: 0 0 200px;
             display: flex;
             align-items: center;
+            gap: 0.5rem;
+            flex: 0 0 200px;
+            position: relative;
+            padding-left: 35px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            user-select: none;
+            margin: 0;
+        }
+
+        .format-label input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            left: 0;
+            height: 22px;
+            width: 22px;
+            background-color: #fff;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .format-label:hover .checkmark {
+            border-color: #4f46e5;
+        }
+
+        .format-label input:checked ~ .checkmark {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 7px;
+            top: 3px;
+            width: 6px;
+            height: 11px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .format-label input:checked ~ .checkmark:after {
+            display: block;
         }
 
         .format-description {
-            color: #666;
+            color: #64748b;
             font-size: 0.9rem;
             flex: 1;
-            margin-left: 1rem;
+            padding-top: 2px;
         }
 
-        .command-display {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
+        .format-group {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
         }
-        .command-display h4 {
-            margin: 0 0 10px 0;
-            color: #495057;
-        }
-        .command-text {
-            margin: 0;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            white-space: pre-wrap;
-            word-break: break-all;
-            font-family: monospace;
+
+        .format-group h3 {
+            color: #1e293b;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e2e8f0;
         }
 
         .tooltip {
@@ -459,6 +529,28 @@
         .button-disabled {
             opacity: 0.6;
             cursor: not-allowed !important;
+        }
+
+        .command-display {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .command-display h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        .command-text {
+            margin: 0;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: monospace;
         }
     </style>
 </head>
@@ -554,26 +646,29 @@
                             FHIR Formats
                         </h3>
                         <div class="format-row">
-                            <div class="format-label">
+                            <label class="format-label">
                                 <input type="checkbox" id="fhir_r4" name="output_formats" value="FHIR_R4">
-                                <label for="fhir_r4">FHIR R4</label>
-                            </div>
+                                <span class="checkmark"></span>
+                                FHIR R4
+                            </label>
                             <div class="format-description">Latest FHIR R4 standard (v4.0.1) - Recommended for new implementations</div>
                         </div>
 
                         <div class="format-row">
-                            <div class="format-label">
+                            <label class="format-label">
                                 <input type="checkbox" id="fhir_stu3" name="output_formats" value="FHIR_STU3">
-                                <label for="fhir_stu3">FHIR STU3</label>
-                            </div>
+                                <span class="checkmark"></span>
+                                FHIR STU3
+                            </label>
                             <div class="format-description">FHIR STU3 (v3.0.1) - For compatibility with older systems</div>
                         </div>
 
                         <div class="format-row">
-                            <div class="format-label">
+                            <label class="format-label">
                                 <input type="checkbox" id="fhir_dstu2" name="output_formats" value="FHIR_DSTU2">
-                                <label for="fhir_dstu2">FHIR DSTU2</label>
-                            </div>
+                                <span class="checkmark"></span>
+                                FHIR DSTU2
+                            </label>
                             <div class="format-description">FHIR DSTU2 (v1.0.2) - Legacy support for older implementations</div>
                         </div>
 
@@ -581,18 +676,20 @@
                             Other Healthcare Formats
                         </h3>
                         <div class="format-row">
-                            <div class="format-label">
+                            <label class="format-label">
                                 <input type="checkbox" id="ccda" name="output_formats" value="CCDA">
-                                <label for="ccda">C-CDA</label>
-                            </div>
+                                <span class="checkmark"></span>
+                                C-CDA
+                            </label>
                             <div class="format-description">Clinical Document Architecture format for clinical document exchange</div>
                         </div>
 
                         <div class="format-row">
-                            <div class="format-label">
+                            <label class="format-label">
                                 <input type="checkbox" id="hl7" name="output_formats" value="HL7">
-                                <label for="hl7">HL7 v2.4</label>
-                            </div>
+                                <span class="checkmark"></span>
+                                HL7 v2.4
+                            </label>
                             <div class="format-description">Health Level Seven v2.4 messages for healthcare system integration</div>
                         </div>
 
@@ -600,26 +697,29 @@
                             Data Analysis Formats
                         </h3>
                         <div class="format-row">
-                            <div class="format-label">
+                            <label class="format-label">
                                 <input type="checkbox" id="csv" name="output_formats" value="CSV">
-                                <label for="csv">CSV</label>
-                            </div>
+                                <span class="checkmark"></span>
+                                CSV
+                            </label>
                             <div class="format-description">Comma-separated values for data analysis and import into other tools</div>
                         </div>
 
                         <div class="format-row">
-                            <div class="format-label">
+                            <label class="format-label">
                                 <input type="checkbox" id="json" name="output_formats" value="JSON">
-                                <label for="json">JSON</label>
-                            </div>
+                                <span class="checkmark"></span>
+                                JSON
+                            </label>
                             <div class="format-description">JavaScript Object Notation format for easy parsing and analysis</div>
                         </div>
 
                         <div class="format-row">
-                            <div class="format-label">
+                            <label class="format-label">
                                 <input type="checkbox" id="cpcds" name="output_formats" value="CPCDS">
-                                <label for="cpcds">CPCDS</label>
-                            </div>
+                                <span class="checkmark"></span>
+                                CPCDS
+                            </label>
                             <div class="format-description">Common Payer Consumer Data Set for insurance and payment data</div>
                         </div>
                     </div>
@@ -640,9 +740,15 @@
             <div id="output-section" class="output-section hidden">
                 <div class="output-header">
                     <h3>Generation Progress</h3>
-                    <div id="progress-info"></div>
                 </div>
-                <div id="output-content"></div>
+                
+                <div id="command-display" class="command-display">
+                    <h4>Synthea Command</h4>
+                    <pre id="command-text" class="command-text"></pre>
+                </div>
+
+                <div id="progress-info" class="progress-info"></div>
+                <div id="output-log" class="output-log"></div>
             </div>
         </form>
     </div>
