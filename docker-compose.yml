@@ -8,7 +8,7 @@ services:
     volumes:
       - ./app:/app/app
       - ./static:/app/static
-      - ./output:/app/output
+      - synthea_output:/app/output
     environment:
       - PYTHONPATH=/app
       - JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
@@ -16,3 +16,4 @@ services:
 
 volumes:
   synthea_output:
+    name: synthea_output
