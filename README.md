@@ -4,25 +4,35 @@ A modern web interface for generating synthetic patient data using the Synthea p
 
 ## Features
 
-- **Multiple Output Formats**:
-  - FHIR (R4, STU3, DSTU2)
+- **Comprehensive Output Format Support**:
+  - FHIR R4 (Latest Version)
+  - FHIR STU3
+  - FHIR DSTU2
   - HL7 v2.4
   - C-CDA
   - CSV
   - JSON
   - CPCDS
 
+- **Advanced FHIR Capabilities**:
+  - Individual FHIR resource file download
+  - Bulk FHIR directory download (as ZIP)
+  - Support for multiple FHIR versions in parallel
+  - Excludes practitioner and hospital information files from downloads
+
 - **User-Friendly Interface**:
   - Simple form for patient generation parameters
   - Real-time progress updates
-  - Organized output format selection
+  - Organized output format selection with "Check All" option
   - Clear descriptions for each format
+  - Modern, responsive design with mobile support
 
 - **Flexible Configuration**:
   - Configurable number of patients
   - State selection for demographics
-  - Customizable output formats
+  - Optional numerical suffixes for patient names
   - Dynamic properties management
+  - Customizable output formats
 
 ## Getting Started
 
@@ -51,12 +61,15 @@ http://localhost:8000
 
 ## Usage
 
-1. Select your desired output formats from the available options
-2. Enter the number of patients to generate
-3. Choose a US state for demographic data
-4. Click "Generate Patients"
-5. Monitor the progress in real-time
-6. Access generated files in the output directory
+1. Access the web interface at `http://localhost:8000`
+2. Configure your generation parameters:
+   - Select one or more output formats
+   - Enter the desired number of patients
+   - Choose a US state for demographic data
+   - Optionally disable numerical suffixes in patient names
+3. Click "Generate Patients" to start the process
+4. Monitor the generation progress in real-time
+5. Once complete, access your files in the respective format directories
 
 ## Output Structure
 
@@ -68,6 +81,8 @@ Generated files are organized in the `output` directory with subdirectories for 
 - `/output/json/` - JSON files
 - `/output/cpcds/` - CPCDS format files
 
+Each format is generated based on your selection in the web interface.
+
 ## Technical Details
 
 - Built with FastAPI and Python
@@ -75,6 +90,8 @@ Generated files are organized in the `output` directory with subdirectories for 
 - Real-time progress updates via Server-Sent Events (SSE)
 - Docker containerization for easy deployment
 - Dynamic properties file management for Synthea configuration
+- Modern responsive UI with CSS Grid and Flexbox
+- Error handling and validation for all API endpoints
 
 ## About Synthea
 
@@ -101,6 +118,7 @@ This project is licensed under the Apache License 2.0 - see the LICENSE file for
 
 ## Coming Soon
 
-- Bulk download functionality for FHIR files
-- Additional format customization options
 - Enhanced error handling and validation
+- Additional format customization options
+- Improved file management and cleanup
+- Support for custom Synthea modules
