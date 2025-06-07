@@ -45,7 +45,7 @@ A modern web interface for generating synthetic patient data using the Synthea p
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/Synthea-patient-generator.git
+git clone https://github.com/jbertman-hc/Synthea-patient-generator.git
 cd Synthea-patient-generator
 ```
 
