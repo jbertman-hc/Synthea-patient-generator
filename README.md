@@ -1,6 +1,6 @@
 # Synthea Patient Generator Web UI
 
-A modern web interface for generating synthetic patient data using the Synthea patient generator.
+A modern web interface for generating synthetic patient data using the Synthea patient generator (screenshot of UI: https://app.screencast.com/sfIhlt8Ucb2yW).
 
 ## Features
 
